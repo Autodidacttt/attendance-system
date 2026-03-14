@@ -20,7 +20,7 @@ setStudents(updated);
 const submitAttendance = async ()=>{
 
 const response = await fetch(
-"https://attendance-backend.onrender.com/attendance",
+"https://attendance-system-pl4x.onrender.com/attendance",
 {
 method:"POST",
 headers:{
