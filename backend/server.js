@@ -7,21 +7,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* -----------------------------
-   MONGODB CONNECTION
------------------------------ */
+/* MongoDB Connection */
 
-mongoose.connect("mongodb+srv://rishimahara688_db_user:enCoAI2Txt0xXJPE@cluster0.ojxjgyg.mongodb.net/attendanceDB")
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
-console.log("MongoDB Connected Successfully");
+console.log("MongoDB Connected");
 })
-.catch((err) => {
-console.log("Database connection error:", err);
-});
+.catch(err => console.log(err));
 
-/* -----------------------------
-   ATTENDANCE SCHEMA
------------------------------ */
+/* Attendance Schema */
 
 const attendanceSchema = new mongoose.Schema({
 name: String,
@@ -34,9 +28,7 @@ default: Date.now
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 
-/* -----------------------------
-   LOGIN API
------------------------------ */
+/* Login API */
 
 app.post("/login", (req, res) => {
 
@@ -45,32 +37,28 @@ const { username, password } = req.body;
 if(username === "teacher" && password === "1234"){
 
 res.json({
-success: true,
-message: "Login successful"
+success: true
 });
 
 }else{
 
 res.json({
-success: false,
-message: "Invalid username or password"
+success: false
 });
 
 }
 
 });
 
-/* -----------------------------
-   SAVE ATTENDANCE
------------------------------ */
+/* Save Attendance */
 
 app.post("/attendance", async (req, res) => {
 
-try {
+try{
 
 const students = req.body;
 
-for (let student of students) {
+for(let student of students){
 
 const newAttendance = new Attendance({
 name: student.name,
@@ -82,10 +70,10 @@ await newAttendance.save();
 }
 
 res.json({
-message: "Attendance saved successfully"
+message: "Attendance saved"
 });
 
-} catch (error) {
+}catch(error){
 
 res.status(500).json({
 message: "Error saving attendance"
@@ -95,34 +83,20 @@ message: "Error saving attendance"
 
 });
 
-/* -----------------------------
-   GET ATTENDANCE
------------------------------ */
+/* Get Attendance */
 
-app.get("/attendance", async (req, res) => {
-
-try {
+app.get("/attendance", async (req,res)=>{
 
 const data = await Attendance.find();
 
 res.json(data);
 
-} catch (error) {
-
-res.status(500).json({
-message: "Error fetching attendance"
 });
 
-}
+const PORT = process.env.PORT || 5000;
 
-});
+app.listen(PORT, ()=>{
 
-/* -----------------------------
-   START SERVER
------------------------------ */
-
-app.listen(5000, () => {
-
-console.log("Server running on http://localhost:5000");
+console.log(`Server running on port ${PORT}`);
 
 });

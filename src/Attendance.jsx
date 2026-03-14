@@ -1,45 +1,45 @@
-import React, { useState } from "react";
+import React,{useState} from "react";
 
-function Attendance() {
+function Attendance(){
 
-const [students, setStudents] = useState([
-{ name: "Ravi", status: "Present" },
-{ name: "Priya", status: "Present" },
-{ name: "Rahul", status: "Present" }
+const [students,setStudents] = useState([
+{name:"Ravi",status:"Present"},
+{name:"Priya",status:"Present"},
+{name:"Rahul",status:"Present"}
 ]);
 
-const handleChange = (index, value) => {
+const handleChange = (index,value)=>{
 
-const updatedStudents = [...students];
-updatedStudents[index].status = value;
+const updated=[...students];
+updated[index].status=value;
 
-setStudents(updatedStudents);
+setStudents(updated);
 
 };
 
-const submitAttendance = () => {
+const submitAttendance = ()=>{
 
-fetch("https://attendance-backend.onrender.com/attendance", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
+fetch("https://attendance-backend.onrender.com/attendance",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
 },
-
-body: JSON.stringify(students)
-
+body:JSON.stringify(students)
 })
-.then(res => res.json())
-.then(data => alert(data.message));
+.then(res=>res.json())
+.then(data=>alert(data.message));
 
 };
 
-return (
+return(
 
-<div>
+<div style={{
+background:"white",
+padding:"40px",
+borderRadius:"10px"
+}}>
 
-<h2>Attendance System</h2>
+<h2>Attendance</h2>
 
 <table border="1">
 
@@ -48,30 +48,24 @@ return (
 <th>Status</th>
 </tr>
 
-{students.map((student, index) => (
-
+{students.map((student,index)=>(
 <tr key={index}>
 
 <td>{student.name}</td>
 
 <td>
-
 <select
 value={student.status}
-onChange={(e) =>
-handleChange(index, e.target.value)
-}
+onChange={(e)=>handleChange(index,e.target.value)}
 >
 
 <option>Present</option>
 <option>Absent</option>
 
 </select>
-
 </td>
 
 </tr>
-
 ))}
 
 </table>
