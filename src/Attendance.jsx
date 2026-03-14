@@ -14,6 +14,7 @@ const handleChange = (index,value)=>{
 
 const updated=[...students];
 updated[index].status=value;
+
 setStudents(updated);
 
 };
@@ -27,7 +28,8 @@ for(const student of students){
 await addDoc(collection(db,"attendance"),{
 name:student.name,
 status:student.status,
-date:new Date()
+date:new Date(),        // stores date
+timestamp:Date.now()    // used for sorting
 });
 
 }
@@ -45,15 +47,31 @@ alert("Error saving attendance");
 
 return(
 
-<div>
+<div style={{
+background:"white",
+padding:"40px",
+borderRadius:"10px"
+}}>
 
 <h2>Attendance</h2>
 
+<table border="1">
+
+<thead>
+<tr>
+<th>Student</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
 {students.map((student,index)=>(
-<div key={index}>
+<tr key={index}>
 
-{student.name}
+<td>{student.name}</td>
 
+<td>
 <select
 value={student.status}
 onChange={(e)=>handleChange(index,e.target.value)}
@@ -63,9 +81,16 @@ onChange={(e)=>handleChange(index,e.target.value)}
 <option>Absent</option>
 
 </select>
+</td>
 
-</div>
+</tr>
 ))}
+
+</tbody>
+
+</table>
+
+<br/>
 
 <button onClick={submitAttendance}>
 Submit Attendance
