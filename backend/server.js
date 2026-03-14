@@ -11,16 +11,11 @@ app.use(express.json());
 
 /* MongoDB Connection */
 
-mongoose.connect(process.env.MONGODB_URI, {
-useNewUrlParser: true,
-useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
 console.log("MongoDB Connected");
 })
-.catch(err => {
-console.error("MongoDB connection error:", err);
-});
+.catch(err => console.log(err));
 
 /* Attendance Schema */
 
@@ -38,34 +33,38 @@ const Attendance = mongoose.model("Attendance", attendanceSchema);
 /* Test Route */
 
 app.get("/", (req,res)=>{
-res.json({ message: "Backend running successfully" });
+res.json({message:"Backend running"});
 });
 
-/* Login API */
+/* LOGIN ROUTE */
 
-app.post("/login", (req, res) => {
+app.post("/login",(req,res)=>{
 
 const { username, password } = req.body;
 
+console.log("Login request received:", username);
+
 if(username === "teacher" && password === "1234"){
 
-return res.status(200).json({
-success: true,
-message: "Login successful"
+return res.json({
+success:true,
+message:"Login successful"
+});
+
+}else{
+
+return res.json({
+success:false,
+message:"Invalid credentials"
 });
 
 }
 
-return res.status(401).json({
-success: false,
-message: "Invalid login"
 });
 
-});
+/* SAVE ATTENDANCE */
 
-/* Save Attendance */
-
-app.post("/attendance", async (req, res) => {
+app.post("/attendance", async (req,res)=>{
 
 try{
 
@@ -73,12 +72,12 @@ const students = req.body;
 
 for(const student of students){
 
-const newAttendance = new Attendance({
+const record = new Attendance({
 name: student.name,
 status: student.status
 });
 
-await newAttendance.save();
+await record.save();
 
 }
 
@@ -100,7 +99,7 @@ message:"Error saving attendance"
 
 });
 
-/* Get Attendance */
+/* GET ATTENDANCE */
 
 app.get("/attendance", async (req,res)=>{
 
@@ -109,9 +108,11 @@ try{
 const data = await Attendance.find();
 res.json(data);
 
-}catch(err){
+}catch(error){
 
-res.status(500).json({message:"Error fetching attendance"});
+res.status(500).json({
+message:"Error fetching attendance"
+});
 
 }
 
@@ -121,6 +122,6 @@ res.status(500).json({message:"Error fetching attendance"});
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, ()=>{
+app.listen(PORT,()=>{
 console.log(`Server running on port ${PORT}`);
 });
