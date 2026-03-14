@@ -1,4 +1,6 @@
 import React,{useState} from "react";
+import { db } from "./firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 function Attendance(){
 
@@ -12,7 +14,6 @@ const handleChange = (index,value)=>{
 
 const updated=[...students];
 updated[index].status=value;
-
 setStudents(updated);
 
 };
@@ -21,24 +22,21 @@ const submitAttendance = async ()=>{
 
 try{
 
-const response = await fetch(
-"https://attendance-system-pl4x.onrender.com/attendance",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(students)
+for(const student of students){
+
+await addDoc(collection(db,"attendance"),{
+name:student.name,
+status:student.status,
+date:new Date()
+});
+
 }
-);
 
-const data = await response.json();
+alert("Attendance saved");
 
-alert(data.message);
+}catch(error){
 
-}catch(err){
-
-console.log(err);
+console.log(error);
 alert("Error saving attendance");
 
 }
@@ -47,31 +45,15 @@ alert("Error saving attendance");
 
 return(
 
-<div style={{
-background:"white",
-padding:"40px",
-borderRadius:"10px"
-}}>
+<div>
 
 <h2>Attendance</h2>
 
-<table border="1">
-
-<thead>
-<tr>
-<th>Student</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody>
-
 {students.map((student,index)=>(
-<tr key={index}>
+<div key={index}>
 
-<td>{student.name}</td>
+{student.name}
 
-<td>
 <select
 value={student.status}
 onChange={(e)=>handleChange(index,e.target.value)}
@@ -81,16 +63,9 @@ onChange={(e)=>handleChange(index,e.target.value)}
 <option>Absent</option>
 
 </select>
-</td>
 
-</tr>
+</div>
 ))}
-
-</tbody>
-
-</table>
-
-<br/>
 
 <button onClick={submitAttendance}>
 Submit Attendance
