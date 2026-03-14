@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React,{useState} from "react";
 
-function Login({ setLoggedIn }) {
+function Login({setLoggedIn}){
 
 const [username,setUsername] = useState("");
 const [password,setPassword] = useState("");
 
-const handleLogin = async (e) => {
+const handleLogin = async (e)=>{
 
 e.preventDefault();
 
-try {
+try{
 
 const response = await fetch(
 "https://attendance-backend.onrender.com/login",
@@ -27,17 +27,15 @@ password
 
 const data = await response.json();
 
-console.log("Login response:",data);
-
 if(data.success){
 setLoggedIn(true);
 }else{
 alert("Invalid login");
 }
 
-}catch(error){
+}catch(err){
 
-console.error("Login error:",error);
+console.log(err);
 alert("Server error");
 
 }
