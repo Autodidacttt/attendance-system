@@ -15,7 +15,9 @@ mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
 console.log("MongoDB Connected");
 })
-.catch(err => console.log(err));
+.catch((err) => {
+console.log("MongoDB Error:", err);
+});
 
 /* Attendance Schema */
 
@@ -33,16 +35,18 @@ const Attendance = mongoose.model("Attendance", attendanceSchema);
 /* Test Route */
 
 app.get("/", (req,res)=>{
-res.json({message:"Backend running"});
+res.json({
+message:"Backend running successfully"
+});
 });
 
 /* LOGIN ROUTE */
 
 app.post("/login",(req,res)=>{
 
-const { username, password } = req.body;
+const {username,password} = req.body;
 
-console.log("Login request received:", username);
+console.log("Login attempt:",username);
 
 if(username === "teacher" && password === "1234"){
 
@@ -51,14 +55,12 @@ success:true,
 message:"Login successful"
 });
 
-}else{
+}
 
 return res.json({
 success:false,
-message:"Invalid credentials"
+message:"Invalid username or password"
 });
-
-}
 
 });
 
@@ -72,23 +74,23 @@ const students = req.body;
 
 for(const student of students){
 
-const record = new Attendance({
-name: student.name,
-status: student.status
+const newAttendance = new Attendance({
+name:student.name,
+status:student.status
 });
 
-await record.save();
+await newAttendance.save();
 
 }
 
 res.json({
 success:true,
-message:"Attendance saved"
+message:"Attendance saved successfully"
 });
 
 }catch(error){
 
-console.error(error);
+console.error("Attendance error:",error);
 
 res.status(500).json({
 success:false,

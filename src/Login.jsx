@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 function Login({ setLoggedIn }) {
 
-const [username, setUsername] = useState("");
-const [password, setPassword] = useState("");
+const [username,setUsername] = useState("");
+const [password,setPassword] = useState("");
 
 const handleLogin = async (e) => {
 
@@ -11,88 +11,76 @@ e.preventDefault();
 
 try {
 
-const response = await fetch("https://attendance-backend.onrender.com/login", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
+const response = await fetch(
+"https://attendance-backend.onrender.com/login",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
 },
-body: JSON.stringify({
-username: username,
-password: password
+body:JSON.stringify({
+username,
+password
 })
-});
+}
+);
 
 const data = await response.json();
 
-console.log("Login response:", data);
+console.log("Login response:",data);
 
-if (data.success) {
+if(data.success){
 setLoggedIn(true);
-} else {
-alert("Invalid username or password");
+}else{
+alert("Invalid login");
 }
 
-} catch (error) {
+}catch(error){
 
-console.error("Login error:", error);
-alert("Server not responding");
+console.error("Login error:",error);
+alert("Server error");
 
 }
 
 };
 
-const cardStyle = {
-background: "white",
-padding: "40px",
-borderRadius: "12px",
-boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-width: "320px",
-textAlign: "center"
-};
+return(
 
-const inputStyle = {
-width: "100%",
-padding: "10px",
-margin: "10px 0",
-borderRadius: "6px",
-border: "1px solid #ccc"
-};
-
-const buttonStyle = {
-width: "100%",
-padding: "10px",
-background: "#667eea",
-color: "white",
-border: "none",
-borderRadius: "6px",
-cursor: "pointer"
-};
-
-return (
-
-<form style={cardStyle} onSubmit={handleLogin}>
+<form onSubmit={handleLogin} style={{
+background:"white",
+padding:"40px",
+borderRadius:"12px",
+boxShadow:"0 10px 25px rgba(0,0,0,0.2)",
+width:"300px",
+textAlign:"center"
+}}>
 
 <h2>Attendance System</h2>
 
 <input
-style={inputStyle}
 type="text"
 placeholder="Username"
 value={username}
-onChange={(e) => setUsername(e.target.value)}
-required
+onChange={(e)=>setUsername(e.target.value)}
+style={{width:"100%",padding:"10px",margin:"10px 0"}}
 />
 
 <input
-style={inputStyle}
 type="password"
 placeholder="Password"
 value={password}
-onChange={(e) => setPassword(e.target.value)}
-required
+onChange={(e)=>setPassword(e.target.value)}
+style={{width:"100%",padding:"10px",margin:"10px 0"}}
 />
 
-<button style={buttonStyle} type="submit">
+<button type="submit" style={{
+width:"100%",
+padding:"10px",
+background:"#667eea",
+color:"white",
+border:"none",
+borderRadius:"6px"
+}}>
 Login
 </button>
 
