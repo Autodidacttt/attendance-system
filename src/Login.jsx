@@ -1,24 +1,22 @@
-import React, { useState } from "react";
-
-function Login({ setLoggedIn }) {
-
-const [username,setUsername] = useState("");
-const [password,setPassword] = useState("");
-
 const handleLogin = () => {
 
-fetch("https://attendance-backend.onrender.com/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
+fetch("https://attendance-backend.onrender.com/login", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
 },
-body:JSON.stringify({
+body: JSON.stringify({
 username,
 password
 })
 })
-.then(res=>res.json())
-.then(data=>{
+.then(async (res) => {
+
+const text = await res.text(); // get raw response
+
+try {
+
+const data = JSON.parse(text); // try converting to JSON
 
 if(data.success){
 setLoggedIn(true);
@@ -26,66 +24,16 @@ setLoggedIn(true);
 alert("Invalid login");
 }
 
-})
-.catch(err=>console.log(err));
+} catch(error) {
 
-};
-
-const cardStyle = {
-background:"white",
-padding:"40px",
-borderRadius:"12px",
-boxShadow:"0 10px 25px rgba(0,0,0,0.2)",
-width:"300px",
-textAlign:"center"
-};
-
-const inputStyle = {
-width:"100%",
-padding:"10px",
-margin:"10px 0",
-borderRadius:"6px",
-border:"1px solid #ccc"
-};
-
-const buttonStyle = {
-width:"100%",
-padding:"10px",
-background:"#667eea",
-color:"white",
-border:"none",
-borderRadius:"6px",
-cursor:"pointer"
-};
-
-return(
-
-<div style={cardStyle}>
-
-<h2>Attendance System</h2>
-
-<input
-style={inputStyle}
-type="text"
-placeholder="Username"
-onChange={(e)=>setUsername(e.target.value)}
-/>
-
-<input
-style={inputStyle}
-type="password"
-placeholder="Password"
-onChange={(e)=>setPassword(e.target.value)}
-/>
-
-<button style={buttonStyle} onClick={handleLogin}>
-Login
-</button>
-
-</div>
-
-);
+console.error("Invalid JSON response:", text);
+alert("Server error. Please try again.");
 
 }
 
-export default Login;
+})
+.catch(err => {
+console.error("Login error:", err);
+});
+
+};
