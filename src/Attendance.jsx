@@ -2,8 +2,6 @@ import React,{useState} from "react";
 
 function Attendance(){
 
-const API = import.meta.env.VITE_API_URL;
-
 const [students,setStudents] = useState([
 {name:"Ravi",status:"Present"},
 {name:"Priya",status:"Present"},
@@ -23,13 +21,16 @@ const submitAttendance = async ()=>{
 
 try{
 
-const response = await fetch(`${API}/attendance`,{
+const response = await fetch(
+"https://attendance-system-pl4x.onrender.com/attendance",
+{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify(students)
-});
+}
+);
 
 const data = await response.json();
 

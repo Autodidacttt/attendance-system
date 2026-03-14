@@ -4,75 +4,79 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+/* Middleware */
+
 app.use(cors());
 app.use(express.json());
 
 /* MongoDB connection */
 
 mongoose.connect(process.env.MONGODB_URI)
-.then(()=>{
+.then(() => {
 console.log("MongoDB connected");
 })
-.catch(err=>{
-console.log(err);
+.catch(err => {
+console.error("MongoDB error:", err);
 });
 
-/* test route */
+/* Root route */
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
 res.json({
-message:"Backend running"
+message: "Attendance backend running"
 });
 });
 
-/* login route */
+/* Login API */
 
-app.post("/login",(req,res)=>{
+app.post("/login", (req, res) => {
 
-const {username,password} = req.body;
+const { username, password } = req.body;
 
-if(username === "teacher" && password === "1234"){
+console.log("Login attempt:", username);
+
+if (username === "teacher" && password === "1234") {
 
 return res.json({
-success:true
+success: true
 });
 
 }
 
 return res.json({
-success:false
+success: false
 });
 
 });
 
-/* attendance schema */
+/* Attendance Schema */
 
 const attendanceSchema = new mongoose.Schema({
-
-name:String,
-status:String,
-date:{
-type:Date,
-default:Date.now
+name: String,
+status: String,
+date: {
+type: Date,
+default: Date.now
 }
-
 });
 
-const Attendance = mongoose.model("Attendance",attendanceSchema);
+const Attendance = mongoose.model("Attendance", attendanceSchema);
 
-/* save attendance */
+/* Save Attendance */
 
-app.post("/attendance",async(req,res)=>{
+app.post("/attendance", async (req, res) => {
 
-try{
+try {
 
 const students = req.body;
 
-for(const student of students){
+console.log("Attendance received:", students);
+
+for (const student of students) {
 
 const record = new Attendance({
-name:student.name,
-status:student.status
+name: student.name,
+status: student.status
 });
 
 await record.save();
@@ -80,33 +84,49 @@ await record.save();
 }
 
 res.json({
-success:true,
-message:"Attendance saved"
+success: true,
+message: "Attendance saved successfully"
 });
 
-}catch(err){
+} catch (err) {
+
+console.error("Attendance error:", err);
 
 res.status(500).json({
-success:false
+success: false,
+message: "Error saving attendance"
 });
 
 }
 
 });
 
-/* get attendance */
+/* Get Attendance */
 
-app.get("/attendance",async(req,res)=>{
+app.get("/attendance", async (req, res) => {
+
+try {
 
 const data = await Attendance.find();
 res.json(data);
 
+} catch (err) {
+
+console.error("Fetch error:", err);
+
+res.status(500).json({
+success: false,
+message: "Error fetching attendance"
 });
 
-/* server */
+}
+
+});
+
+/* Start Server */
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT,()=>{
-console.log(`Server running on ${PORT}`);
+app.listen(PORT, () => {
+console.log(`Server running on port ${PORT}`);
 });
