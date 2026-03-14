@@ -10,30 +10,24 @@ username,
 password
 })
 })
-.then(async (res) => {
+.then(async (response) => {
 
-const text = await res.text(); // get raw response
+if (!response.ok) {
+throw new Error("Server error");
+}
 
-try {
+const data = await response.json();
 
-const data = JSON.parse(text); // try converting to JSON
-
-if(data.success){
+if (data.success) {
 setLoggedIn(true);
-}else{
+} else {
 alert("Invalid login");
 }
 
-} catch(error) {
-
-console.error("Invalid JSON response:", text);
-alert("Server error. Please try again.");
-
-}
-
 })
-.catch(err => {
-console.error("Login error:", err);
+.catch((error) => {
+console.error("Login error:", error);
+alert("Login failed. Please try again.");
 });
 
 };
