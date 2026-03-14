@@ -2,6 +2,8 @@ import React,{useState} from "react";
 
 function Attendance(){
 
+const API = import.meta.env.VITE_API_URL;
+
 const [students,setStudents] = useState([
 {name:"Ravi",status:"Present"},
 {name:"Priya",status:"Present"},
@@ -19,20 +21,26 @@ setStudents(updated);
 
 const submitAttendance = async ()=>{
 
-const response = await fetch(
-"https://attendance-system-pl4x.onrender.com/attendance",
-{
+try{
+
+const response = await fetch(`${API}/attendance`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify(students)
-}
-);
+});
 
 const data = await response.json();
 
 alert(data.message);
+
+}catch(err){
+
+console.log(err);
+alert("Error saving attendance");
+
+}
 
 };
 
@@ -63,7 +71,6 @@ borderRadius:"10px"
 <td>{student.name}</td>
 
 <td>
-
 <select
 value={student.status}
 onChange={(e)=>handleChange(index,e.target.value)}
@@ -73,7 +80,6 @@ onChange={(e)=>handleChange(index,e.target.value)}
 <option>Absent</option>
 
 </select>
-
 </td>
 
 </tr>
