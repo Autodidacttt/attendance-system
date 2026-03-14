@@ -25,7 +25,19 @@ password
 }
 );
 
-const data = await response.json();
+/* read response safely */
+
+const text = await response.text();
+console.log("Server response:",text);
+
+let data;
+
+try{
+data = JSON.parse(text);
+}catch{
+alert("Server returned invalid response");
+return;
+}
 
 if(data.success){
 setLoggedIn(true);
@@ -36,7 +48,7 @@ alert("Invalid login");
 }catch(err){
 
 console.log(err);
-alert("Server error");
+alert("Network error. Try again.");
 
 }
 
