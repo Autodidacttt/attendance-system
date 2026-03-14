@@ -5,36 +5,26 @@ function Login({ setLoggedIn }) {
 const [username, setUsername] = useState("");
 const [password, setPassword] = useState("");
 
-const handleLogin = async () => {
+const handleLogin = async (e) => {
+
+e.preventDefault();
 
 try {
 
-const response = await fetch(
-"https://attendance-backend.onrender.com/login",
-{
+const response = await fetch("https://attendance-backend.onrender.com/login", {
 method: "POST",
 headers: {
 "Content-Type": "application/json"
 },
 body: JSON.stringify({
-username,
-password
+username: username,
+password: password
 })
-}
-);
+});
 
-const text = await response.text();
-console.log("Server response:", text);
+const data = await response.json();
 
-let data;
-
-try {
-data = JSON.parse(text);
-} catch (err) {
-console.error("Invalid JSON from server:", text);
-alert("Server returned invalid response");
-return;
-}
+console.log("Login response:", data);
 
 if (data.success) {
 setLoggedIn(true);
@@ -44,8 +34,8 @@ alert("Invalid username or password");
 
 } catch (error) {
 
-console.error("Login request failed:", error);
-alert("Server not responding. Try again.");
+console.error("Login error:", error);
+alert("Server not responding");
 
 }
 
@@ -80,7 +70,7 @@ cursor: "pointer"
 
 return (
 
-<div style={cardStyle}>
+<form style={cardStyle} onSubmit={handleLogin}>
 
 <h2>Attendance System</h2>
 
@@ -90,6 +80,7 @@ type="text"
 placeholder="Username"
 value={username}
 onChange={(e) => setUsername(e.target.value)}
+required
 />
 
 <input
@@ -98,13 +89,14 @@ type="password"
 placeholder="Password"
 value={password}
 onChange={(e) => setPassword(e.target.value)}
+required
 />
 
-<button style={buttonStyle} onClick={handleLogin}>
+<button style={buttonStyle} type="submit">
 Login
 </button>
 
-</div>
+</form>
 
 );
 
