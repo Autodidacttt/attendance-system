@@ -16,8 +16,8 @@ headers: {
 },
 
 body: JSON.stringify({
-username: username,
-password: password
+username,
+password
 })
 
 })
@@ -26,8 +26,7 @@ password: password
 
 if(data.success){
 setLoggedIn(true);
-}
-else{
+}else{
 alert("Invalid login");
 }
 
@@ -35,29 +34,59 @@ alert("Invalid login");
 
 };
 
+const cardStyle = {
+background: "white",
+padding: "40px",
+borderRadius: "12px",
+boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+width: "300px",
+textAlign: "center"
+};
+
+const inputStyle = {
+width: "100%",
+padding: "10px",
+margin: "10px 0",
+borderRadius: "6px",
+border: "1px solid #ccc",
+fontSize: "16px"
+};
+
+const buttonStyle = {
+width: "100%",
+padding: "10px",
+background: "#667eea",
+color: "white",
+border: "none",
+borderRadius: "6px",
+fontSize: "16px",
+cursor: "pointer"
+};
+
 return (
 
-<div>
+<div style={cardStyle}>
 
-<h2>Login</h2>
+<h2>Attendance System</h2>
 
 <input
+style={inputStyle}
 type="text"
 placeholder="Username"
 onChange={(e)=>setUsername(e.target.value)}
 />
 
-<br/><br/>
-
 <input
+style={inputStyle}
 type="password"
 placeholder="Password"
 onChange={(e)=>setPassword(e.target.value)}
 />
 
-<br/><br/>
-
-<button onClick={handleLogin}>
+<button
+style={buttonStyle}
+onClick={handleLogin}
+>
 Login
 </button>
 

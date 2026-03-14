@@ -1,14 +1,38 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Demo database (temporary storage)
-let attendance = [];
+/* -----------------------------
+   MONGODB CONNECTION
+----------------------------- */
+
+mongoose.connect("mongodb+srv://rishimahara688_db_user:enCoAI2Txt0xXJPE@cluster0.ojxjgyg.mongodb.net/attendanceDB")
+.then(() => {
+console.log("MongoDB Connected Successfully");
+})
+.catch((err) => {
+console.log("Database connection error:", err);
+});
+
+/* -----------------------------
+   ATTENDANCE SCHEMA
+----------------------------- */
+
+const attendanceSchema = new mongoose.Schema({
+name: String,
+status: String,
+date: {
+type: Date,
+default: Date.now
+}
+});
+
+const Attendance = mongoose.model("Attendance", attendanceSchema);
 
 /* -----------------------------
    LOGIN API
@@ -18,15 +42,14 @@ app.post("/login", (req, res) => {
 
 const { username, password } = req.body;
 
-// Simple authentication check
-if (username === "teacher" && password === "1234") {
+if(username === "teacher" && password === "1234"){
 
 res.json({
 success: true,
 message: "Login successful"
 });
 
-} else {
+}else{
 
 res.json({
 success: false,
@@ -37,36 +60,62 @@ message: "Invalid username or password"
 
 });
 
-
 /* -----------------------------
-   SAVE ATTENDANCE API
+   SAVE ATTENDANCE
 ----------------------------- */
 
-app.post("/attendance", (req, res) => {
+app.post("/attendance", async (req, res) => {
 
-const data = req.body;
+try {
 
-attendance.push(data);
+const students = req.body;
 
-console.log("Attendance Received:", data);
+for (let student of students) {
+
+const newAttendance = new Attendance({
+name: student.name,
+status: student.status
+});
+
+await newAttendance.save();
+
+}
 
 res.json({
 message: "Attendance saved successfully"
 });
 
+} catch (error) {
+
+res.status(500).json({
+message: "Error saving attendance"
 });
 
+}
+
+});
 
 /* -----------------------------
-   GET ATTENDANCE API
+   GET ATTENDANCE
 ----------------------------- */
 
-app.get("/attendance", (req, res) => {
+app.get("/attendance", async (req, res) => {
 
-res.json(attendance);
+try {
 
+const data = await Attendance.find();
+
+res.json(data);
+
+} catch (error) {
+
+res.status(500).json({
+message: "Error fetching attendance"
 });
 
+}
+
+});
 
 /* -----------------------------
    START SERVER
