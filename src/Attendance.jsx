@@ -19,7 +19,7 @@ setStudents(updatedStudents);
 
 const submitAttendance = () => {
 
-fetch("http://localhost:5000/attendance", {
+fetch("https://attendance-backend.onrender.com/attendance", {
 
 method: "POST",
 

@@ -7,7 +7,7 @@ const [password, setPassword] = useState("");
 
 const handleLogin = () => {
 
-fetch("http://localhost:5000/login", {
+fetch("https://attendance-backend.onrender.com/login", {
 
 method: "POST",
 
